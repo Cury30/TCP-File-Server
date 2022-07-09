@@ -72,9 +72,14 @@ func main() {
 			completeTcpMessage := []byte(strings.Join(args[:], " "))
 			completeTcpMessage = append(completeTcpMessage, delimiter...)
 			connection.Write(completeTcpMessage)
+			for {
+				reception := reciveFromServer(connection)
+				if reception {
+					closeConnection(connection)
+					break
+				}
+			}
 
-			reciveFromServer(connection)
-			closeConnection(connection)
 			break
 
 		} else if args[0] == "quit" {
@@ -87,7 +92,8 @@ func main() {
 
 }
 
-func reciveFromServer(c net.Conn) {
+func reciveFromServer(c net.Conn) (confirmation bool) {
+	confirmation = false
 	myReader := bufio.NewReader(c)
 	inputFromServer, err := myReader.ReadBytes(byte(125))
 
@@ -119,9 +125,12 @@ func reciveFromServer(c net.Conn) {
 			fmt.Printf("Error writing the incoming file: %s\n", error.Error())
 		}
 		fmt.Println("File received...")
+		confirmation = true
+		return confirmation
 	} else {
 		fmt.Println(strings.TrimRight(string(inputFromServer), "}"))
 	}
+	return
 
 }
 
