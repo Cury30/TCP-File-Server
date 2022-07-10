@@ -39,9 +39,11 @@ func main() {
 			completeTcpMessage = append(completeTcpMessage, delimiter...)
 			connection.Write(completeTcpMessage)
 			for {
-				reciveFromServer(connection)
+				reception := reciveFromServer(connection)
+				if reception {
+					fmt.Println("File received...")
+				}
 			}
-
 		} else if args[0] == "send" {
 			file, err := os.Open("./" + args[1])
 			if err != nil {
@@ -67,7 +69,7 @@ func main() {
 			completeTcpMessage = append(completeTcpMessage, fileContent...)
 			connection.Write(completeTcpMessage)
 
-		} else if args[0] == "recive" {
+		} else if args[0] == "receive" {
 			args[0] = "subscribe"
 			completeTcpMessage := []byte(strings.Join(args[:], " "))
 			completeTcpMessage = append(completeTcpMessage, delimiter...)
@@ -96,9 +98,9 @@ func reciveFromServer(c net.Conn) (confirmation bool) {
 	confirmation = false
 	myReader := bufio.NewReader(c)
 	inputFromServer, err := myReader.ReadBytes(byte(125))
-
+	//fmt.Println(string(inputFromServer))
 	if err != nil {
-		fmt.Printf("Error creaating the New Reader: %s\n", err.Error())
+		fmt.Printf("Error creating the New Reader: %s\n", err.Error())
 		panic(err)
 	}
 
@@ -124,12 +126,12 @@ func reciveFromServer(c net.Conn) (confirmation bool) {
 		if error != nil {
 			fmt.Printf("Error writing the incoming file: %s\n", error.Error())
 		}
-		fmt.Println("File received...")
 		confirmation = true
-		return confirmation
 	} else {
 		fmt.Println(strings.TrimRight(string(inputFromServer), "}"))
+		return
 	}
+	fmt.Println("outter return")
 	return
 
 }

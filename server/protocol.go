@@ -181,7 +181,7 @@ func (c *client) readInput() {
 				args:    splittedMsg[:3],
 				content: myMsg,
 			}
-		case "recive":
+		case "receive":
 			c.commands <- command{
 				id:     CMD_SUBSCRIBE,
 				client: c,
