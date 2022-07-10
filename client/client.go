@@ -98,7 +98,6 @@ func reciveFromServer(c net.Conn) (confirmation bool) {
 	confirmation = false
 	myReader := bufio.NewReader(c)
 	inputFromServer, err := myReader.ReadBytes(byte(125))
-	//fmt.Println(string(inputFromServer))
 	if err != nil {
 		fmt.Printf("Error creating the New Reader: %s\n", err.Error())
 		panic(err)
@@ -131,7 +130,6 @@ func reciveFromServer(c net.Conn) (confirmation bool) {
 		fmt.Println(strings.TrimRight(string(inputFromServer), "}"))
 		return
 	}
-	fmt.Println("outter return")
 	return
 
 }
